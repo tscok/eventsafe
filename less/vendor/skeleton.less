@@ -1,0 +1,64 @@
+// Skeleton
+// http://getskeleton.com/
+@import "normalize.css";
+@import "skeleton.css";
+
+// Customization
+
+/* Base Styles
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+body {
+  font-size: 1.6em;
+  line-height: 1.6;
+  font-weight: 300;
+  color: @text-color;
+}
+
+/* Grid
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+@media (min-width: @responsive-size-tablet) {
+    .container {
+        width: 90%;
+    }
+}
+
+.button.button-primary[disabled],
+button.button-primary[disabled],
+input[type="submit"].button-primary[disabled],
+input[type="reset"].button-primary[disabled],
+input[type="button"].button-primary[disabled],
+.button.button-primary[disabled]:hover,
+button.button-primary[disabled]:hover,
+input[type="submit"].button-primary[disabled]:hover,
+input[type="reset"].button-primary[disabled]:hover,
+input[type="button"].button-primary[disabled]:hover {
+  background-color: #999;
+  border-color: transparent;
+}
+
+/* Forms
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+input[type="date"] {
+  height: 38px;
+  padding: 6px 10px;
+  background-color: #fff;
+  border: 1px solid #D1D1D1;
+  border-radius: 4px;
+  box-shadow: none;
+  box-sizing: border-box; }
+input[type="date"] {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none; }
+input[type="date"]:focus {
+  border: 1px solid #33C3F0;
+  outline: 0; }
+textarea {
+  vertical-align: top; }
+input.form-error,
+input.form-error:focus,
+textarea.form-error,
+textarea.form-error:focus {
+  border-color: crimson; }
+.form-error-hint {
+  color: crimson; }

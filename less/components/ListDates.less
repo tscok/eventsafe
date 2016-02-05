@@ -1,0 +1,35 @@
+.list-dates {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 40px 0;
+
+    &__date {
+        flex: 1;
+        margin: 10px;
+        min-width: 110px;
+        max-width: 110px;
+        text-align: center;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    &__month {
+        font-size: .875em;
+        font-weight: 700;
+        line-height: 30px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        background-color: #d0021b;
+        color: @color-white;
+    }
+
+    &__day {
+        font: 700 3em/10rem serif;
+        background-color: @color-white;
+        color: @color-black;
+        box-shadow: 0 3px rgba(0,0,0,.2);
+    }
+}

@@ -1,0 +1,43 @@
+{
+  "name": "eventsafe",
+  "version": "1.0.0",
+  "description": "A save-the-date app for storing important events.",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "webpack": "webpack-dev-server --inline --hot",
+    "build": "webpack -p"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tscok/eventsafe.git"
+  },
+  "author": "Mikael Carlsson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tscok/eventsafe/issues"
+  },
+  "homepage": "https://github.com/tscok/eventsafe#readme",
+  "devDependencies": {
+    "babel-core": "^6.4.5",
+    "babel-loader": "^6.2.1",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "css-loader": "^0.23.1",
+    "json-loader": "^0.5.4",
+    "less": "^2.6.0",
+    "less-loader": "^2.2.2",
+    "purebem": "^0.3.0",
+    "style-loader": "^0.13.0",
+    "webpack": "^1.12.12"
+  },
+  "dependencies": {
+    "babel-preset-react": "^6.3.13",
+    "firebase": "^2.4.0",
+    "form-serialize": "^0.7.0",
+    "moment": "^2.11.1",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
+    "reactfire": "^0.5.1"
+  }
+}
