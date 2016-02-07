@@ -25,7 +25,7 @@ const ListDates = React.createClass({
     renderDate(date, index) {
         let m = moment(moment().year() + date, 'YYYYMMDD');
         return (
-            <div className={ block('date') } key={ index } onClick={ this.handleClick.bind(this, date) }>
+            <div className={ block('date') } key={ index } onClick={ () => this.handleClick(date) }>
                 <div className={ block('month') }>{ m.format('MMM') }</div>
                 <div className={ block('day') }>{ m.format('D') }</div>
             </div>

@@ -13,9 +13,9 @@ const App = React.createClass({
 
     getInitialState() {
         return {
-            allDates: [],
+            currentDates: [],
             displayDates: [],
-            upcomingDates: [],
+            displayEvents: [],
             isValidDate: false,
             isValidName: false
         };
@@ -23,55 +23,83 @@ const App = React.createClass({
 
     componentWillMount() {
         this.firebaseRef = new Firebase('https://eventsafe.firebaseio.com/dates');
-        this.firebaseRef.orderByChild('date').on('value', this.handleAllDates);
 
-        // let key = moment().format('MMDD');
-        // this.firebaseRef.orderByKey().startAt(key).limitToFirst(5)
-        //     .on('value', this.handleUpcomingDates);
-    },
-
-    handleAllDates(snapshot) {
-        let allDates = [];
-        snapshot.forEach((item) => {
-            if (allDates.indexOf(item.val().date) === -1) {
-                allDates.push(item.val().date);
-            }
-        });
-        this.setState({ allDates });
-    },
-
-    handleUpcomingDates(snapshot) {
-        // let upcomingDates = [];
-        // snapshot.forEach((date) => {
-        //     date.forEach((child) => {
-        //         let obj = child.val();
-        //         obj.key = date.key();
-        //         obj.uid = child.key();
-        //         upcomingDates.push(obj);
-        //     });
-        // });
-        // this.setState({ upcomingDates });
-    },
-
-    handleDateClick(date) {
+        /* --- ALL DATES --- */
         let displayDates = [];
-        this.firebaseRef.orderByChild('date').equalTo(date).on('value', (snapshot) => {
-            snapshot.forEach((date) => {
-                let obj = date.val();
-                obj.key = date.key();
-                displayDates.push(obj);
+        this.firebaseRef.on('value', (snap) => {
+            displayDates.length = 0;
+            snap.forEach((date) => {
+                displayDates.push(date.key());
             });
             this.setState({ displayDates });
         });
+
+        /* --- CURRENT DATES --- */
+        let m = moment();
+        let thisDate = m.format('MMDD');
+        let nextDate = m.add(1, 'months').format('MMDD');
+        let endAt = nextDate < thisDate ? '1231' : nextDate;
+
+        console.log('thisDate:', thisDate, 'nextDate:', nextDate, 'endAt:', endAt);
+
+        let normalDates = [];
+        let specialDates = [];
+        
+        // normal case
+        this.firebaseRef.orderByKey().startAt(thisDate).endAt(endAt).on('value', (snap) => {
+            normalDates.length = 0;
+            snap.forEach((date) => {
+                date.forEach((data) => {
+                    let obj = data.val();
+                    obj.uid = data.key();
+                    obj.date = date.key();
+                    normalDates.push(obj);
+                });
+            });
+            this.setState({ currentDates: normalDates.concat(specialDates) });
+        });
+
+        // special case
+        this.firebaseRef.orderByKey().startAt(nextDate).endAt(nextDate).on('value', (snap) => {
+            if (nextDate > thisDate) {
+                return;
+            }
+            specialDates.length = 0;
+            snap.forEach((date) => {
+                date.forEach((data) => {
+                    let obj = data.val();
+                    obj.uid = data.key();
+                    obj.date = date.key();
+                    specialDates.push(obj);
+                });
+            });
+            this.setState({ currentDates: normalDates.concat(specialDates) });
+        });
     },
 
-    handleInputName(value) {
-        let isValidName = value !== '' && value.trim() !== '';
+    handleDateClick(date) {
+        let displayEvents = []
+        let clicked = this.firebaseRef.orderByKey().equalTo(date);
+        let getEvents = (snap) => {
+            snap.forEach((date) => {
+                date.forEach((data) => {
+                    let obj = data.val();
+                    obj.uid = data.key();
+                    obj.date = date.key();
+                    displayEvents.push(obj);
+                });
+            });
+            this.setState({ displayEvents });
+        };
+        clicked.on('value', getEvents);
+        clicked.off('value', getEvents);
+    },
+
+    handleInputName(isValidName) {
         this.setState({ isValidName });
     },
 
-    handleInputDate(value) {
-        let isValidDate = value.length === 8 && moment(value, 'YYYYMMDD').isValid();
+    handleInputDate(isValidDate) {
         this.setState({ isValidDate });
     },
 
@@ -82,33 +110,61 @@ const App = React.createClass({
         });
     },
 
-    handleSubmit(data) {
-        return this.firebaseRef.push(data);
+    handleRemove(date, id) {
+        this.firebaseRef.child(date).child(id).remove();
+    },
+
+    handleSubmit(date, data) {
+        return this.firebaseRef.child(date).push(data);
+    },
+
+    renderEventsOn() {
+        if (this.state.displayEvents.length === 0) {
+            return null;
+        }
+        return (
+            <section>
+                <h5>Events on…</h5>
+                <ListEvents
+                    events={ this.state.displayEvents }
+                    remove={ this.handleRemove } />
+            </section>
+        );
+    },
+
+    renderUpcoming() {
+        if (this.state.currentDates.length === 0) {
+            return null;
+        }
+        return (
+            <section>
+                <h5>Upcoming Events</h5>
+                <ListEvents
+                    events={ this.state.currentDates }
+                    remove={ this.handleRemove } />
+            </section>
+        );
     },
 
     render() {
-        console.log(this.state.displayDates);
         return (
             <main>
                 <section>
-                    <h5>My Dates</h5>
                     <ListDates
-                        dates={ this.state.allDates }
+                        dates={ this.state.displayDates }
                         onClick={ this.handleDateClick } />
                 </section>
+                { this.renderEventsOn() }
+                { this.renderUpcoming() }
                 <section>
-                    <h5>Upcoming Events</h5>
-                    <ListEvents events={ this.state.upcomingDates } />
-                </section>
-                <section>
-                    <h5>Add Events</h5>
+                    <h5>Add Event</h5>
                     <CreateEvent
                         isValidDate={ this.state.isValidDate }
                         isValidName={ this.state.isValidName }
                         onInputDate={ this.handleInputDate }
                         onInputName={ this.handleInputName }
                         onReset={ this.handleReset }
-                        onSubmit={ this.handleSubmit }/>
+                        onSubmit={ this.handleSubmit } />
                 </section>
             </main>
         );

@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import moment from 'moment';
 import purebem from 'purebem';
+import { apostrophe } from './utils';
 
 
 const block = purebem.of('list-events');
@@ -8,7 +9,8 @@ const block = purebem.of('list-events');
 const ListEvents = React.createClass({
 
     propTypes: {
-        events: PropTypes.array.isRequired
+        events: PropTypes.array.isRequired,
+        remove: PropTypes.func.isRequired
     },
 
     getDefaultProps() {
@@ -22,31 +24,47 @@ const ListEvents = React.createClass({
             calendar : {
                 lastDay : '[Yesterday]',
                 sameDay : '[Today]',
-                nextDay : '[Tomorrow]',
+                nextDay : '[is Tomorrow]',
                 lastWeek : '[last] dddd',
                 nextWeek : 'dddd',
-                sameElse : 'L'
+                sameElse : '[on] MMMM Do'
             }
         });
     },
 
+    handleRemove(date, id) {
+        this.props.remove(date, id);
+    },
+
     renderEvent(item, index) {
-        // console.log(item);
-        // let year = moment().format('YYYY');
-        // let date = moment(`${year}${item}`, 'YYYY-MM-DD');
+        let year = moment().year();
+        let date = moment(`${year}${item.date}`, 'YYYY-MM-DD');
+        let diff = date.diff(moment.unix(item.timestamp), 'years', true);
+        let text = '';
+
+        let birthdayText = (
+            <span className={ block('data') }>{ apostrophe(item.name) } { item.type }; turns { diff } { date.calendar() }</span>
+        );
+
+        switch(item.type) {
+            default:
+                text = birthdayText;
+        }
+
         return (
-            <li key={ index }></li>
+            <div key={ index } className={ block('event') }>{ text }
+                <span onClick={ () => this.handleRemove(item.date, item.uid) } className={ block('remove') }>Remove</span>
+            </div>
         );
     },
 
     render() {
-        // console.log(this.props.events);
         return (
-            <ul className={ block() }>
+            <div className={ block() }>
                 {
                     [].map.call(this.props.events, this.renderEvent)
                 }
-            </ul>
+            </div>
         );
     }
 });

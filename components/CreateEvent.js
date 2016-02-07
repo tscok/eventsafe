@@ -20,10 +20,12 @@ const CreateEvent = React.createClass({
     handleSubmit(evt) {
         evt.preventDefault();
         let data = serialize(this.EventForm, { hash: true });
+        let date = moment(data.date).format('MMDD');
+        
         data.timestamp = moment(data.date, 'YYYYMMDD').unix();
-        data.date = moment(data.date).format('MMDD');
-
-        this.props.onSubmit(data)
+        delete data.date;
+        
+        this.props.onSubmit(date, data)
             .then(() => {
                 this.EventForm.reset();
                 this.EventDate.focus();
@@ -32,11 +34,15 @@ const CreateEvent = React.createClass({
     },
 
     handleInputDate(evt) {
-        this.props.onInputDate(evt.target.value);
+        let value = evt.target.value;
+        let isValidDate = value.length === 8 && moment(value, 'YYYYMMDD').isValid();
+        this.props.onInputDate(isValidDate);
     },
 
     handleInputName(evt) {
-        this.props.onInputName(evt.target.value);
+        let value = evt.target.value;
+        let isValidName = value !== '' && value.trim() !== '';
+        this.props.onInputName(isValidName);
     },
 
     render() {
@@ -49,7 +55,7 @@ const CreateEvent = React.createClass({
                 </div>
                 <div className={ block('input-group') }>
                     <label>Name</label>
-                    <input type="text" name="name" placeholder="John Doe" onInput={ this.handleInputName } ref={ (ref) => this.EventName = ref }/>
+                    <input type="text" name="name" autoComplete="off" placeholder="John Doe" onInput={ this.handleInputName } ref={ (ref) => this.EventName = ref }/>
                 </div>
                 <div className={ block('input-group') }>
                     <label>Type</label>

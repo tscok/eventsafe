@@ -1,3 +1,20 @@
 .list-events {
+    &__event {
+        display: flex;
+        padding: 5px 10px;
 
+        &:nth-child(even) {
+            background-color: @color-white;
+        }
+    }
+    &__data {
+        flex: 1;
+    }
+    &__remove {
+        text-decoration: underline;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
 }
