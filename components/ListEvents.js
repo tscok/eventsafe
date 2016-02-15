@@ -10,7 +10,7 @@ const ListEvents = React.createClass({
 
     propTypes: {
         events: PropTypes.array.isRequired,
-        remove: PropTypes.func.isRequired
+        onRemove: PropTypes.func.isRequired
     },
 
     getDefaultProps() {
@@ -24,7 +24,7 @@ const ListEvents = React.createClass({
             calendar : {
                 lastDay : '[Yesterday]',
                 sameDay : '[Today]',
-                nextDay : '[is Tomorrow]',
+                nextDay : '[Tomorrow]',
                 lastWeek : '[last] dddd',
                 nextWeek : 'dddd',
                 sameElse : '[on] MMMM Do'
@@ -33,16 +33,16 @@ const ListEvents = React.createClass({
     },
 
     handleRemove(date, id) {
-        this.props.remove(date, id);
+        this.props.onRemove(date, id);
     },
 
     renderEvent(item, index) {
-        let year = moment().year();
-        let date = moment(`${year}${item.date}`, 'YYYY-MM-DD');
-        let diff = date.diff(moment.unix(item.timestamp), 'years', true);
-        let text = '';
+        const year = moment().year();
+        const date = moment(`${year}${item.date}`, 'YYYY-MM-DD');
+        const diff = date.diff(moment.unix(item.timestamp), 'years', true);
+        let text;
 
-        let birthdayText = (
+        const birthdayText = (
             <span className={ block('data') }>{ apostrophe(item.name) } { item.type }; turns { diff } { date.calendar() }</span>
         );
 

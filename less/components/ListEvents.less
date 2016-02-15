@@ -1,10 +1,15 @@
 .list-events {
+    padding: 15px;
+    background-color: @color-white;
+    box-shadow: 0 3px rgba(0,0,0,.2);
+
     &__event {
         display: flex;
-        padding: 5px 10px;
+        line-height: 40px;
+        padding: 0 15px;
 
-        &:nth-child(even) {
-            background-color: @color-white;
+        &:nth-child(odd) {
+            background-color: @color-gray-light;
         }
     }
     &__data {

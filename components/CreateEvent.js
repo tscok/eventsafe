@@ -3,18 +3,20 @@ import serialize from 'form-serialize';
 import moment from 'moment';
 import purebem from 'purebem';
 
+import SectionHeader from './SectionHeader';
+
 
 const block = purebem.of('create-event');
 
 const CreateEvent = React.createClass({
 
     propTypes: {
+        isToggled: PropTypes.bool.isRequired,
         isValidDate: PropTypes.bool.isRequired,
         isValidName: PropTypes.bool.isRequired,
-        onInputDate: PropTypes.func.isRequired,
-        onInputName: PropTypes.func.isRequired,
         onReset: PropTypes.func.isRequired,
-        onSubmit: PropTypes.func.isRequired
+        onSubmit: PropTypes.func.isRequired,
+        onUpdate: PropTypes.func.isRequired
     },
 
     handleSubmit(evt) {
@@ -33,29 +35,33 @@ const CreateEvent = React.createClass({
             });
     },
 
-    handleInputDate(evt) {
+    onDateInput(evt) {
         let value = evt.target.value;
         let isValidDate = value.length === 8 && moment(value, 'YYYYMMDD').isValid();
-        this.props.onInputDate(isValidDate);
+        this.props.onUpdate({ isValidDate });
     },
 
-    handleInputName(evt) {
+    onNameInput(evt) {
         let value = evt.target.value;
         let isValidName = value !== '' && value.trim() !== '';
-        this.props.onInputName(isValidName);
+        this.props.onUpdate({ isValidName });
     },
 
-    render() {
+    handleClose() {
+        this.props.onUpdate({ showCreate: !this.props.isToggled });
+    },
+
+    renderForm() {
         let { isValidDate, isValidName } = this.props;
         return (
             <form name="EventForm" className={ block() } onSubmit={ this.handleSubmit } ref={ (ref) => this.EventForm = ref }>
                 <div className={ block('input-group') }>
                     <label>Date</label>
-                    <input type="number" name="date" autoComplete="off" placeholder="YYYYMMDD" onInput={ this.handleInputDate } ref={ (ref) => this.EventDate = ref }/>
+                    <input type="number" name="date" autoComplete="off" placeholder="YYYYMMDD" onInput={ this.onDateInput } ref={ (ref) => this.EventDate = ref }/>
                 </div>
                 <div className={ block('input-group') }>
                     <label>Name</label>
-                    <input type="text" name="name" autoComplete="off" placeholder="John Doe" onInput={ this.handleInputName } ref={ (ref) => this.EventName = ref }/>
+                    <input type="text" name="name" autoComplete="off" placeholder="John Doe" onInput={ this.onNameInput } ref={ (ref) => this.EventName = ref }/>
                 </div>
                 <div className={ block('input-group') }>
                     <label>Type</label>
@@ -70,6 +76,17 @@ const CreateEvent = React.createClass({
                     <button type="submit" className="button-primary" disabled={ !isValidDate || !isValidName }>Save Event</button>
                 </div>
             </form>
+        );
+    },
+
+    render() {
+        return (
+            <div>
+                <SectionHeader
+                    headerText="Add Event"
+                    onClose={ this.handleClose } />
+                { this.renderForm() }
+            </div>
         );
     }
 });

@@ -8,6 +8,8 @@
 @import "components/ListDates";
 @import "components/ListEvents";
 @import "components/CreateEvent";
+@import "components/SectionHeader";
+@import "components/Navigation";
 
 
 * {
@@ -19,9 +21,17 @@ html, body {
 }
 
 body {
-    background-color: @color-gray-light;
+    background-color: #EDF2F3;
 }
 
 section {
     padding: 40px 0;
+}
+
+.wrapper {
+    display: flex;
+}
+
+main {
+    flex: 1;
 }

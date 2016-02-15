@@ -22,12 +22,19 @@ const ListDates = React.createClass({
         this.props.onClick(date);
     },
 
-    renderDate(date, index) {
-        let m = moment(moment().year() + date, 'YYYYMMDD');
+    renderDate(item, index) {
+        let today = moment();
+        let date = moment(today.year() + item.date, 'YYYYMMDD');
         return (
-            <div className={ block('date') } key={ index } onClick={ () => this.handleClick(date) }>
-                <div className={ block('month') }>{ m.format('MMM') }</div>
-                <div className={ block('day') }>{ m.format('D') }</div>
+            <div className={ block('item') } key={ index } onClick={ () => this.handleClick(item.date) }>
+                <div className={ block('date') }>
+                    <div className={ block('month') }>{ date.format('MMM') }</div>
+                    <div className={ block('day') }>{ date.format('D') }</div>
+                </div>
+                <div className={ block('info') }>
+                    <div className={ block('events') }>{ item.events } Event{ item.events > 1 ? 's' : '' }</div>
+                    <div className={ block('days') }>{ today.to(date) }</div>
+                </div>
             </div>
         );
     },
